@@ -12,9 +12,9 @@ import (
 
 type Todo struct {
 	Title       string
-	complete    bool
-	createAt    time.Time
-	completedAt *time.Time
+	Complete    bool
+	CreateAt    time.Time
+	CompletedAt *time.Time
 }
 
 type Todos []Todo
@@ -32,14 +32,11 @@ func (t *Todos) validateIndex(index int) error {
 func (t *Todos) add(title string) {
 	todo := Todo{
 		Title:       title,
-		complete:    false,
-		createAt:    time.Now(),
-		completedAt: nil,
+		Complete:    false,
+		CreateAt:    time.Now(),
+		CompletedAt: nil,
 	}
 
-	if t != nil {
-		log.Printf("I'M SAY TO YOU SORRY, FAILED TO ADD TODO😭")
-	}
 	*t = append(*t, todo)
 }
 
@@ -48,8 +45,8 @@ func (t *Todos) update(index int, title string) {
 	if err := t.validateIndex(index); err != nil {
 		log.Printf("FAILED TO UPDATE/EDIT TODoooo SORRY!! 😔 %s", err)
 	}
-	res := (*t)[index].Title == title
-	log.Println("UPDATED TODO -> ", res)
+	todo:= *t
+	todo[index].Title = title
 }
 
 // delete by index
@@ -71,13 +68,13 @@ func (t *Todos) toggle(index int) {
 	todos := *t
 	todo := &todos[index]
 
-	if !todo.complete {
+	if !todo.Complete {
 		completedTime := time.Now()
-		todo.completedAt = &completedTime
+		todo.CompletedAt = &completedTime
 	} else {
-		todo.completedAt = nil
+		todo.CompletedAt = nil
 	}
-	todo.complete = !todo.complete
+	todo.Complete = !todo.Complete
 }
 
 // DISPLAY THE TODO
@@ -85,26 +82,25 @@ func (t *Todos) print() {
 	table := table.New(os.Stdout)
 	table.SetAlignment()
 	table.SetRowLines(false)
-	table.SetHeaders("#", "Title", "Completed", "Create At", "Completed At")
+	table.SetHeaders("#", "Title", "Completed", "Created At", "Completed At")
 
 	for i, todo := range *t {
 		completed := "❌"
 		completedAt := ""
 
-		if todo.complete {
+		if todo.Complete  {
 			completed = "✅"
-
-			if todo.completedAt != nil {
-				completedAt = time.Now().Format(time.RFC1123)
+			if todo.CompletedAt != nil {
+				completedAt = todo.CompletedAt.Format(time.RFC3339)
 			}
-			table.AddRow(
-				strconv.Itoa(i),
-				todo.Title,
-				completed,
-				todo.createAt.Format(time.RFC1123),
-				completedAt,
-			)
 		}
+		table.AddRow(
+			strconv.Itoa(i),
+			todo.Title,
+			completed,
+			todo.CreateAt.Format(time.RFC3339),
+			completedAt,
+		)
 	}
 	table.Render()
 }

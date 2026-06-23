@@ -18,18 +18,18 @@ func NewStorage[T any](filename string) *Storage[T] {
 
 // this functions is used to save data in json storage
 func (s *Storage[T]) Save(data T) error {
-	fileData, err := json.MarshalIndent(data, "", "")
+	fileData, err := json.MarshalIndent(data, "", "    ")
 
 	if err != nil{
 		log.Printf("FAILED TO SAVE DATAAAAAAA!!!!!! %s", err)
 	}
 
-	return os.WriteFile(s.Filename, fileData, 0)
+	return os.WriteFile(s.Filename, fileData, 0664)
 }
 
 //load the data 
 func (s *Storage[T]) load(data *T) error {
-	fileData, err := json.MarshalIndent(data, "" , "")
+	fileData, err := os.ReadFile(s.Filename)
 	
 	if err != nil{
 		log.Printf("FAILED TO LOAD DATAAAAAAA!!!!!! %s", err)

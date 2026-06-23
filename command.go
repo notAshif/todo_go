@@ -58,7 +58,7 @@ func (cf *CommandFlag) Execute(t *Todos){
 			os.Exit(1)
 		}
 
-		t.update(i, part[0])
+		t.update(i, part[1])
 
 	default:
 		log.Printf("INVALID COMMAND ❌");
